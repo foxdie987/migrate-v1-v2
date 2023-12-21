@@ -1,7 +1,6 @@
 const path = require("path");
 const del = require("del");
 const fse = require("fs-extra");
-const prompts = require("prompts");
 const { execSync } = require("child_process");
 const { success } = require('./common');
 
@@ -30,23 +29,8 @@ async function prismaGenerate() {
 
 async function main() {
   try {
-    const response = await prompts({
-      type: 'select',
-      name: 'value',
-      choices: [
-        { title: 'PostgreSQL', value: 'postgresql' },
-        { title: 'MySQL', value: 'mysql' }
-      ],
-      message: 'Which database are you using?',
-    });
-
-    // Wait for 5 seconds (5000 milliseconds) and then update the response
-    setTimeout(() => {
-      response.value = 'postgresql';
-      prompts.resolve(response);
-    }, 5000);
-
-    const databaseType = response.value;
+    // Use an environment variable to specify the database type
+    const databaseType = process.env.DATABASE_TYPE || 'postgresql';
 
     console.log(`Database type selected: ${databaseType}`);
 
