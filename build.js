@@ -1,8 +1,8 @@
 const path = require("path");
 const del = require("del");
 const fse = require("fs-extra");
-const prompts = require( "prompts");
-const {execSync} = require( "child_process");
+const prompts = require("prompts");
+const { execSync } = require("child_process");
 const { success } = require('./common');
 
 async function copyDbFiles(databaseType) {
@@ -10,7 +10,7 @@ async function copyDbFiles(databaseType) {
     const src = path.resolve(__dirname, `./db/${databaseType}`);
     const dest = path.resolve(__dirname, './prisma');
 
-    del.sync(dest, {force: true});
+    del.sync(dest, { force: true });
 
     fse.copySync(src, dest);
 
@@ -28,40 +28,35 @@ async function prismaGenerate() {
   }
 }
 
-/* (async () => {
-  const response = await prompts({
-    type: 'select',
-    name: 'value',
-    choices: [
-      { title: 'PostgreSQL', value: 'postgresql' },
-      { title: 'MySQL', value: 'mysql' }
-    ],
-    message: 'Which database are you using?',
-  });
-*/
-    (async () => {
-      const response = await prompts({
-        type: 'select',
-        name: 'value',
-        choices: [
-          { title: 'PostgreSQL', value: 'postgresql' },
-          { title: 'MySQL', value: 'mysql' }
-        ],
-        message: 'Which database are you using?',
-      });
-    
-      // Wait for 5 seconds (5000 milliseconds) and then update the response
-      setTimeout(() => {
-        response.value = 'postgresql';
-        prompts.resolve(response);
-      }, 5000);
-    })();
+async function main() {
+  try {
+    const response = await prompts({
+      type: 'select',
+      name: 'value',
+      choices: [
+        { title: 'PostgreSQL', value: 'postgresql' },
+        { title: 'MySQL', value: 'mysql' }
+      ],
+      message: 'Which database are you using?',
+    });
 
-  const databaseType = response.value;
+    // Wait for 5 seconds (5000 milliseconds) and then update the response
+    setTimeout(() => {
+      response.value = 'postgresql';
+      prompts.resolve(response);
+    }, 5000);
 
-  console.log(`Database type selected: ${databaseType}`);
+    const databaseType = response.value;
 
-  // copy prisma files and generate prisma client
-  await copyDbFiles(databaseType);
-  await prismaGenerate();
-})();
+    console.log(`Database type selected: ${databaseType}`);
+
+    // copy prisma files and generate prisma client
+    await copyDbFiles(databaseType);
+    await prismaGenerate();
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+// Call the main function
+main();
