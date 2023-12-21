@@ -28,7 +28,7 @@ async function prismaGenerate() {
   }
 }
 
-(async () => {
+/* (async () => {
   const response = await prompts({
     type: 'select',
     name: 'value',
@@ -38,6 +38,24 @@ async function prismaGenerate() {
     ],
     message: 'Which database are you using?',
   });
+*/
+    (async () => {
+      const response = await prompts({
+        type: 'select',
+        name: 'value',
+        choices: [
+          { title: 'PostgreSQL', value: 'postgresql' },
+          { title: 'MySQL', value: 'mysql' }
+        ],
+        message: 'Which database are you using?',
+      });
+    
+      // Wait for 5 seconds (5000 milliseconds) and then update the response
+      setTimeout(() => {
+        response.value = 'postgresql';
+        prompts.resolve(response);
+      }, 5000);
+    })();
 
   const databaseType = response.value;
 
